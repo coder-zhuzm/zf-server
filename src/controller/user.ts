@@ -1,31 +1,23 @@
-import { Request, Response, NextFunction } from "express";
-import { validateRegisterInput } from "../utils/validator";
-import HttpException from "../exceptions/HttpException";
-import { UNPROCESSABLE_ENTITY, UNAUTHORIZED } from "http-status-codes";
-import { IUserDocument, User } from "../models/user";
-import { UserPayload } from "../typings/jwt";
-import jwt from "jsonwebtoken";
-export const validate = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const authorization = req.headers["authorization"];
+import { Request, Response, NextFunction } from 'express';
+import { validateRegisterInput } from '../utils/validator';
+import HttpException from '../exceptions/HttpException';
+import { UNPROCESSABLE_ENTITY, UNAUTHORIZED } from 'http-status-codes';
+import { IUserDocument, User } from '../models/user';
+import { UserPayload } from '../typings/jwt';
+import jwt from 'jsonwebtoken';
+export const validate = async (req: Request, res: Response, next: NextFunction) => {
+  const authorization = req.headers['authorization'];
   if (authorization) {
-    const token = authorization.split(" ")[1];
+    const token = authorization.split(' ')[1];
     if (token) {
       try {
-        const payload: UserPayload = jwt.verify(
-          token,
-          process.env.JWT_SECRET_KEY!
-        ) as UserPayload;
-        const user = await User.findById(payload.id);
+        const payload: UserPayload = jwt.verify(token, process.env.JWT_SECRET_KEY!) as UserPayload;
+        const user: any = await User.findById(payload.id);
         if (user) {
-          // delete user.password;
-          console.log('delete user.password ');
+          delete user?.password;
           res.json({
             success: true,
-            data: user,
+            data: user
           });
         } else {
           next(new HttpException(UNAUTHORIZED, `用户不合法!`));
@@ -33,26 +25,18 @@ export const validate = async (
       } catch (error) {
         next(new HttpException(UNAUTHORIZED, `token不合法!`));
       }
+
     } else {
       next(new HttpException(UNAUTHORIZED, `token未提供!`));
     }
   } else {
     next(new HttpException(UNAUTHORIZED, `authorization未提供!`));
   }
-};
-export const register = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+}
+export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let { username, password, confirmPassword, email, addresses } = req.body;
-    const { valid, errors } = validateRegisterInput(
-      username,
-      password,
-      confirmPassword,
-      email
-    );
+    const { valid, errors } = validateRegisterInput(username, password, confirmPassword, email);
     if (!valid) {
       throw new HttpException(UNPROCESSABLE_ENTITY, `参数验证失败!`, errors);
     }
@@ -60,11 +44,9 @@ export const register = async (
       username,
       email,
       password,
-      addresses,
+      addresses
     });
-    let oldUser: IUserDocument | null = await User.findOne({
-      username: user.username,
-    });
+    let oldUser: IUserDocument | null = await User.findOne({ username: user.username });
     if (oldUser) {
       throw new HttpException(UNPROCESSABLE_ENTITY, `用户名重复!`);
     }
@@ -72,18 +54,14 @@ export const register = async (
     let token = user.generateToken();
     res.json({
       success: true,
-      data: { token },
+      data: { token }
     });
   } catch (error) {
     next(error);
   }
-};
+}
 
-export const login = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let { username, password } = req.body;
     let user = await User.login(username, password);
@@ -92,8 +70,8 @@ export const login = async (
       res.json({
         success: true,
         data: {
-          token,
-        },
+          token
+        }
       });
     } else {
       throw new HttpException(UNAUTHORIZED, `登录失败`);
@@ -101,10 +79,12 @@ export const login = async (
   } catch (error) {
     next(error);
   }
-};
-export const uploadAvatar = async (req: Request, res: Response) => {
+}
+export const uploadAvatar = async (req: any, res: Response) => {
+  console.log(111,req);
+  
   let { userId } = req.body;
   let avatar = `${req.protocol}://${req.headers.host}/uploads/${req.file.filename}`;
   await User.updateOne({ _id: userId }, { avatar });
   res.send({ success: true, data: avatar });
-};
+}

@@ -14,7 +14,14 @@ import * as lessonController from "./controller/lesson";
 import { Slider, Lesson } from "./models";
 import "dotenv/config";
 import path from "path";
-
+import multer from "multer";
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, "public", "uploads"),
+  filename(_req: Request, file: Express.Multer.File, cb: any) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage });
 const app: Express = express();
 app.use(morgan("dev"));
 app.use(cors());
@@ -29,7 +36,7 @@ app.get("/", (_req: Request, res: Response) => {
 app.get("/user/validate", userController.validate);
 app.post("/user/register", userController.register);
 app.post("/user/login", userController.login);
-
+app.post("/user/uploadAvatar", upload.single("avatar"), userController.uploadAvatar);
 app.get("/slider/list", sliderController.list);
 
 app.get("/lesson/list", lessonController.list);
@@ -81,7 +88,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/react/img/react.jpg",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/react.png",
-        price: "¥100.00元",
+        priceText: "¥100.00元",
+        price: 100,
         category: "react",
       },
       {
@@ -90,7 +98,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/react/img/react.jpg",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/react.png",
-        price: "¥200.00元",
+        priceText: "¥400.00元",
+        price: 400,
         category: "react",
       },
       {
@@ -99,7 +108,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/react/img/react.jpg",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/react.png",
-        price: "¥300.00元",
+        priceText: "¥100.00元",
+        price: 100,
         category: "react",
       },
       {
@@ -108,7 +118,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/react/img/react.jpg",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/react.png",
-        price: "¥400.00元",
+        priceText: "¥333.00元",
+        price: 333,
         category: "react",
       },
       {
@@ -117,7 +128,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/react/img/react.jpg",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/react.png",
-        price: "¥500.00元",
+        priceText: "¥900.00元",
+        price: 900,
         category: "react",
       },
       {
@@ -126,7 +138,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/vue/img/vue.png",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/vue.png",
-        price: "¥100.00元",
+        priceText: "¥800.00元",
+        price: 800,
         category: "vue",
       },
       {
@@ -135,7 +148,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/vue/img/vue.png",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/vue.png",
-        price: "¥200.00元",
+        priceText: "400.00元",
+        price: 400,
         category: "vue",
       },
       {
@@ -144,7 +158,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/vue/img/vue.png",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/vue.png",
-        price: "¥300.00元",
+        priceText: "400.00元",
+        price: 400,
         category: "vue",
       },
       {
@@ -153,7 +168,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/vue/img/vue.png",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/vue.png",
-        price: "¥400.00元",
+        priceText: "¥160.00元",
+        price: 160,
         category: "vue",
       },
       {
@@ -162,7 +178,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/vue/img/vue.png",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/vue.png",
-        price: "¥500.00元",
+        priceText: "¥120.00元",
+        price: 120,
         category: "vue",
       },
       {
@@ -171,7 +188,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/react/img/react.jpg",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/react.png",
-        price: "¥600.00元",
+        priceText: "¥666.00元",
+        price: 666,
         category: "react",
       },
       {
@@ -180,7 +198,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/react/img/react.jpg",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/react.png",
-        price: "¥700.00元",
+        priceText: "¥150.00元",
+        price: 150,
         category: "react",
       },
       {
@@ -189,7 +208,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/react/img/react.jpg",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/react.png",
-        price: "¥800.00元",
+        priceText: "¥200.00元",
+        price: 200,
         category: "react",
       },
       {
@@ -198,7 +218,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/react/img/react.jpg",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/react.png",
-        price: "¥900.00元",
+        priceText: "¥900.00元",
+        price: 900,
         category: "react",
       },
       {
@@ -207,7 +228,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/react/img/react.jpg",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/react.png",
-        price: "¥1000.00元",
+        priceText: "¥800.00元",
+        price: 900,
         category: "react",
       },
       {
@@ -216,7 +238,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/vue/img/vue.png",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/vue.png",
-        price: "¥600.00元",
+        priceText: "¥700.00元",
+        price: 700,
         category: "vue",
       },
       {
@@ -225,7 +248,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/vue/img/vue.png",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/vue.png",
-        price: "¥700.00元",
+        priceText: "¥500.00元",
+        price: 500,
         category: "vue",
       },
       {
@@ -234,7 +258,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/vue/img/vue.png",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/vue.png",
-        price: "¥800.00元",
+        priceText: "¥300.00元",
+        price: 300,
         category: "vue",
       },
       {
@@ -243,7 +268,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/vue/img/vue.png",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/vue.png",
-        price: "¥900.00元",
+        priceText: "¥200.00元",
+        price: 200,
         category: "vue",
       },
       {
@@ -252,7 +278,8 @@ async function createLessons() {
         video: "http://img.zhufengpeixun.cn/gee2.mp4",
         poster: "http://www.zhufengpeixun.cn/vue/img/vue.png",
         url: "http://www.zhufengpeixun.cn/themes/jianmo2/images/vue.png",
-        price: "¥1000.00元",
+        priceText: "¥1000.00元",
+        price: 1000,
         category: "vue",
       },
     ];
